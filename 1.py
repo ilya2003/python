@@ -30,6 +30,56 @@ t.fd(142)
 t.left(90)
 t.down()
 t.fd(100)
+t.up()
+t.right(180)
+t.fd(100)
+t.right(45)
+t.fd(75)
+t.left(90)
+t.fd(75)
+t.down()
+for i in range(4):
+    t.fd(50)
+    t.left(90)
+t.up()
+t.fd(25)
+t.down()
+t.left(90)
+t.fd(50)
+t.left(90)
+t.fd(25)
+t.left(90)
+t.fd(25)
+t.left(90)
+t.fd(50)
+t.right(90)
+t.up()
+t.fd(150)
+t.right(180)
+t.fd(75)
+t.down()
+for i in range(4):
+    t.left(90)
+    t.fd(50)
+t.left(90)
+t.fd(25)
+t.left(90)
+t.fd(50)
+t.right(90)
+t.fd(25)
+t.right(90)
+t.fd(25)
+t.right(90)
+t.fd(50)
+
+
+
+
+
+
+
+
+
 
 t.screen.exitonclick()
 t.screen.mainloop()
