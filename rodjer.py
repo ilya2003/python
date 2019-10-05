@@ -21,62 +21,82 @@ while ready not in {'да', 'нет'}:
 
 if ready == 'да':
 
-    examples = ''
-    max_answer = ''
+    examples_quantity = ''  # Количество примеров
+    count_to = ''  # До скольки будем считать
+    correct_answers = 0
+    fails = 0
 
-    while not examples.isdigit():
+    while not examples_quantity.isdigit():
         print('Сколько примеров ты готов решить?')
-        examples = input()
-        if examples.isdigit():
-            while int(examples) < 1:
+        examples_quantity = input()
+        if examples_quantity.isdigit():
+            while int(examples_quantity) < 1:
                 print('Введи число больше 0')
-                examples = input()
-                while not examples.isdigit():
+                examples_quantity = input()
+                while not examples_quantity.isdigit():
                     print('Должна быть цифра')
-                    examples = input()
+                    examples_quantity = input()
         else:
             print('Должна быть цифра')
 
-    while not max_answer.isdigit():
+    while not count_to.isdigit():
         print('До скольки будем считать? Например до 100')
-        max_answer = input()
-        if max_answer.isdigit():
-            while int(max_answer) < 2:
+        count_to = input()
+        if count_to.isdigit():
+            while int(count_to) < 2:
                 print('Введи число больше 1')
-                max_answer = input()
-                while not max_answer.isdigit():
+                count_to = input()
+                while not count_to.isdigit():
                     print('Должна быть цифра')
-                    max_answer = input()
+                    count_to = input()
         else:
             print('Должна быть цифра')
-
-
 
     print('Хорошо, тогда начинаем...')
 
-    for i in range(examples):
+    examples_quantity = int(examples_quantity)
+    count_to = int(count_to)
+
+    for i in range(examples_quantity):
         print('пример ' + str(i+1) + ':')
-        number1 = randint(1, max)
-        number2 = randint(1, max)
+        number1 = randint(1, count_to)
+        number2 = randint(1, count_to)
         sign = choice('+-')
 
-        while number1 < number2:
-            number1 = randint(1, max)
 
-        while number1 + number2 < max:
-            number1 = randint(1, max)
-
-        print('сколько будет '+str(number1)+sign+str(number2))
-
-        answer = int(input())
         if  sign == '-':
+            while number1 < number2:
+                number1 = randint(1, count_to)
             right_answer = number1 - number2
 
         if  sign == '+':
+            while number1 + number2 > count_to:
+                number1 = randint(1, count_to)
+                number2 = randint(1, count_to)
             right_answer = number1 + number2
+
+        print('сколько будет ' + str(number1) + sign + str(number2))
+
+        answer = ''  # Ответ пользователя
+        while not answer.isdigit():
+            answer = input()
+            if not answer.isdigit():
+                print('Должна быть цифра')
+                print('сколько будет ' + str(number1) + sign + str(number2))
+
+        answer = int(answer)
 
         if answer == right_answer:
             print('Правильно, молодец')
+            correct_answers += 1
+        else:
+            print('Неправильно')
+            print('Правильный ответ: '+str(right_answer))
+            fails += 1
+
+    print('Правильных ответов: ' +correct_answers)
+    print('Ошибок: '+fails)
 if ready == 'нет':
     print('''Передумал? Хорошо,может как-нибудь в следующий раз...
 Пока!''')
+
