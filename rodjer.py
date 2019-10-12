@@ -1,6 +1,7 @@
 # программа для автоматизации навыков счёта
 from random import randint, choice
 from time import sleep
+from timeit import default_timer
 
 print('Привет! Меня зовут Роджер. А как тебя?')
 name = input()
@@ -23,8 +24,9 @@ if ready == 'да':
 
     examples_quantity = ''  # Количество примеров
     count_to = ''  # До скольки будем считать
-    correct_answers = 0
-    fails = 0
+    correct_answers = 0  # правильные ответы
+    fails = 0  # ошибки
+    answers_time = 0  # затраченное время 
 
     while not examples_quantity.isdigit():
         print('Сколько примеров ты готов решить?')
@@ -79,7 +81,14 @@ if ready == 'да':
 
         answer = ''  # Ответ пользователя
         while not answer.isdigit():
+
+            start = default_timer()  # начнем отсчёт
             answer = input()
+            stop = default_timer()  # закончим отсчёт
+
+            answers_time += stop - start
+
+
             if not answer.isdigit():
                 print('Должна быть цифра')
                 print('сколько будет ' + str(number1) + sign + str(number2))
@@ -93,9 +102,32 @@ if ready == 'да':
             print('Неправильно')
             print('Правильный ответ: '+str(right_answer))
             fails += 1
+    
+    # узнаем количество затраченного времени в минутах и секундах
+    if answers_time < 60: # если меньше одной минуты
+        time_in_seconds = str(answers_time)
+        # затраченное время на все ответы
+        time_spent = time_in_seconds +'секунд'
+    else:
+        time_in_minutes_and_seconds = str(round(answers_time/60, 2))  # например, 2.17
+        time_spent = time_in_minutes = time_in_minutes_and_seconds.split('.')  # разобьем на минуты и секунды [2.17]
 
-    print('Правильных ответов: ' +correct_answers)
-    print('Ошибок: '+fails)
+        time_in_minutes = time_in_minutes_and_seconds[0]  # время в минутах
+        time_in_seconds = time_in_minutes_and_seconds[1]  # время в секундах
+
+        # подсчитаем количество секунд 
+        seconds = '0.'
+        seconds = seconds + time_in_seconds # приведём к виду 0.17
+        seconds = str(round(float(seconds)*60)) # рассчитаем по формуле 0.17*60
+        # затраченное время на все ответы
+        time_spent = time_in_minutes + 'минут и ' + seconds +'секунд'
+
+    if fails == 0:
+        print(f'Молодец, {name}!Ты правильно ответил на все вопросы за {time_spent}')
+    else:
+        print('Правильных ответов: ' +correct_answers)
+        print('Ошибок: '+fails)
+        print(f'{name}!Ты ответил на все вопросы за {time_spent}')
 if ready == 'нет':
     print('''Передумал? Хорошо,может как-нибудь в следующий раз...
 Пока!''')
