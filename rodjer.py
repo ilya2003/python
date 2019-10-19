@@ -21,6 +21,28 @@ while ready not in {'да', 'нет'}:
     ready = ready.lower()
 
 if ready == 'да':
+    # Функция преобразования временных окончаний
+    def time_endings(v):
+        if len(v) == 1:
+            if v == 1:
+                return 'у'
+            elif v == 2 or v == 3 or v == 4:
+                return 'ы'
+            else: 
+                return ''
+        elif len(v) == 2:
+            if v[0] == 1:
+                return ''
+            else:
+                if v[1] == 1:
+                    return 'у'
+                elif v[1] == 2 or v[1] == 3 or v[1] == 4:
+                    return 'ы'
+                else: 
+                    return ''
+        else:
+            return False    
+
 
     examples_quantity = ''  # Количество примеров
     count_to = ''  # До скольки будем считать
@@ -86,7 +108,7 @@ if ready == 'да':
             answer = input()
             stop = default_timer()  # закончим отсчёт
 
-            answers_time += stop - start
+            answers_time += round(stop - start)
 
 
             if not answer.isdigit():
@@ -107,7 +129,7 @@ if ready == 'да':
     if answers_time < 60: # если меньше одной минуты
         time_in_seconds = str(answers_time)
         # затраченное время на все ответы
-        time_spent = time_in_seconds +'секунд'
+        time_spent = time_in_seconds +' секунд'+ time_endings(time_in_seconds) 
     else:
         time_in_minutes_and_seconds = str(round(answers_time/60, 2))  # например, 2.17
         time_spent = time_in_minutes = time_in_minutes_and_seconds.split('.')  # разобьем на минуты и секунды [2.17]
@@ -120,14 +142,14 @@ if ready == 'да':
         seconds = seconds + time_in_seconds # приведём к виду 0.17
         seconds = str(round(float(seconds)*60)) # рассчитаем по формуле 0.17*60
         # затраченное время на все ответы
-        time_spent = time_in_minutes + 'минут и ' + seconds +'секунд'
+        time_spent = time_in_minutes + ' минут' + time_endings(time_in_minutes) + ' и ' + seconds + ' секунд' + time_endings(seconds)
 
     if fails == 0:
-        print(f'Молодец, {name}!Ты правильно ответил на все вопросы за {time_spent}')
+        print(f'Молодец, {name}! Ты правильно ответил на все вопросы за {time_spent}')
     else:
-        print('Правильных ответов: ' +correct_answers)
-        print('Ошибок: '+fails)
-        print(f'{name}!Ты ответил на все вопросы за {time_spent}')
+        print('Правильных ответов: ' + str(correct_answers))
+        print('Ошибок: '+ str(fails))
+        print(f'{name}! Ты ответил на все вопросы за {time_spent}')
 if ready == 'нет':
     print('''Передумал? Хорошо,может как-нибудь в следующий раз...
 Пока!''')
