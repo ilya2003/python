@@ -23,25 +23,19 @@ while ready not in {'да', 'нет'}:
 if ready == 'да':
     # Функция преобразования временных окончаний
     def time_endings(v):
-        if len(v) == 1:
-            if v == 1:
-                return 'у'
-            elif v == 2 or v == 3 or v == 4:
-                return 'ы'
-            else: 
-                return ''
-        elif len(v) == 2:
-            if v[0] == 1:
-                return ''
-            else:
-                if v[1] == 1:
-                    return 'у'
-                elif v[1] == 2 or v[1] == 3 or v[1] == 4:
-                    return 'ы'
-                else: 
-                    return ''
+
+        v_str = str(v)
+        v_last = int(v_str[-1])
+
+        if 9<int(v)<20:
+            return ''
         else:
-            return False    
+            if v_last == 1:
+                return 'у'
+            if 1<v_last<5:
+                return 'ы'
+            else:
+                return ''
 
 
     examples_quantity = ''  # Количество примеров
@@ -131,18 +125,14 @@ if ready == 'да':
         # затраченное время на все ответы
         time_spent = time_in_seconds +' секунд'+ time_endings(time_in_seconds) 
     else:
-        time_in_minutes_and_seconds = str(round(answers_time/60, 2))  # например, 2.17
-        time_spent = time_in_minutes = time_in_minutes_and_seconds.split('.')  # разобьем на минуты и секунды [2.17]
+        minutes = str(answers_time//60)
+        seconds = answers_time - (int(minutes)*60)
 
-        time_in_minutes = time_in_minutes_and_seconds[0]  # время в минутах
-        time_in_seconds = time_in_minutes_and_seconds[1]  # время в секундах
-
-        # подсчитаем количество секунд 
-        seconds = '0.'
-        seconds = seconds + time_in_seconds # приведём к виду 0.17
-        seconds = str(round(float(seconds)*60)) # рассчитаем по формуле 0.17*60
         # затраченное время на все ответы
-        time_spent = time_in_minutes + ' минут' + time_endings(time_in_minutes) + ' и ' + seconds + ' секунд' + time_endings(seconds)
+        if seconds == 0:
+            time_spent = minutes + ' минут' + time_endings(minutes)
+        else:
+            time_spent = minutes + ' минут' + time_endings(minutes) + ' и ' + str(seconds) + ' секунд' + time_endings(seconds)
 
     if fails == 0:
         print(f'Молодец, {name}! Ты правильно ответил на все вопросы за {time_spent}')
