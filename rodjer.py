@@ -4,31 +4,26 @@ from random import randint, choice
 from time import sleep
 from timeit import default_timer
 
-print('Привет! Меня зовут Роджер. А как тебя?')
-name = input()
-name = name.title()
-print('Приятно познакомиться, '+name)
-sleep(1)
+# Функция преобразования временных окончаний
+def time_endings(v):
 
-file_name = f'{name}_errors.txt'
+    v_str = str(v)
+    v_last = int(v_str[-1])
 
-if os.path.exists(file_name):
-    start_type = ''
-    print('Работа над ошибками - 1')
-    print('Проверить знания в математике - 2')
+    if 9<int(v)<20:
+        return ''
+    else:
+        if v_last == 1:
+            return 'у'
+        if 1<v_last<5:
+            return 'ы'
+        else:
+            return ''
 
-    while start_type not in {'1', '2'}:
-        print('Введите номер:')
-        start_type = input()
-        if start_type not in {'1', '2'}:
-            print('Должно быть 1 или 2')
-else:
-    start_type = '2'
-
-# проверка знаний в математике
-if start_type == '2':
-
-    print('Давай проверим твои знания в математике.')
+# Функция проверки знаний в математике
+def count():
+    if not os.path.exists(file_name):
+        print('Давай проверим твои знания в математике.')
     sleep(1)
     print('Ты готов (да или нет)')
     ready = input()
@@ -41,23 +36,7 @@ if start_type == '2':
         ready = ready.lower()
 
     if ready == 'да':
-        # Функция преобразования временных окончаний
-        def time_endings(v):
-
-            v_str = str(v)
-            v_last = int(v_str[-1])
-
-            if 9<int(v)<20:
-                return ''
-            else:
-                if v_last == 1:
-                    return 'у'
-                if 1<v_last<5:
-                    return 'ы'
-                else:
-                    return ''
-
-
+        
         examples_quantity = ''  # Количество примеров
         count_to = ''  # До скольки будем считать
         correct_answers = 0  # правильные ответы
@@ -135,16 +114,18 @@ if start_type == '2':
                 print('Правильно, молодец')
                 correct_answers += 1
             else:
-                if not os.path.exists(file_name):
-                    # создадим файл для записи ошибок
-                    f = open(file_name, 'a')
-
-                #  запишем ошибку в файл
-                f.write(f'{number1} {sign} {number2}\n')
                 print('Неправильно')
                 print('Правильный ответ: '+str(right_answer))
                 fails += 1
-        
+                
+                # создадим файл для записи ошибок
+                f = open(file_name, 'a')
+
+                #  запишем ошибку в файл
+                if fails > 0:
+                    f.write('\n')
+                f.write(f'{number1} {sign} {number2}')
+
         # узнаем количество затраченного времени в минутах и секундах
         if answers_time < 60: # если меньше одной минуты
             time_in_seconds = str(answers_time)
@@ -167,9 +148,51 @@ if start_type == '2':
             print('Ошибок: '+ str(fails))
             print(f'{name}! Ты ответил на все вопросы за {time_spent}')
             f.close()
-    if ready == 'нет':
-        print('''Передумал? Хорошо,может как-нибудь в следующий раз...
-    Пока!''')
-# работа над ошибками
+
+        if ready == 'нет':
+            print('''Передумал? Хорошо,может как-нибудь в следующий раз...
+Пока!''')
+
+# Функция работы над ошибками
+def fix_errors():
+    f = open(file_name, 'r')
+    line = f.readline()
+    separated_line = line.split()
+    print(separated_line)
+    f.close()
+
+
+# Основной блок программы
+print('Привет! Меня зовут Роджер. А как тебя?')
+name = input()
+name = name.title()
+print('Приятно познакомиться, '+name)
+sleep(1)
+
+file_name = f'{name}_errors.txt'
+
+if os.path.exists(file_name):
+    start_type = ''
+    print()
+    print('Работа над ошибками - 1')
+    print('Проверить знания в математике - 2')
+
+    while start_type not in {'1', '2'}:
+        print('Введите номер:')
+        start_type = input()
+        if start_type not in {'1', '2'}:
+            print('Должно быть 1 или 2')
 else:
-    print("Блок работы над ошибками")
+    start_type = '2'
+
+
+# проверка знаний в математике
+if start_type == '1':
+    fix_errors()
+# работа над ошибками
+elif start_type == '2':
+    count()
+else:
+    pass
+    
+    
