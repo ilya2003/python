@@ -76,7 +76,9 @@ def count():
     
     my_warnings = ["Эх....", "А если подумать", "Проверь свой ответ прежде чем давать его", "Серьёзно?", "Напряги мозг"]   
     examples_quantity = ''  # Количество примеров
+    example_number = 0 # номер примера
     count_to = ''  # До скольки будем считать
+    uniques_examples = [] # уникальные примеры
     correct_answers = 0  # правильные ответы
     fails = 0  # ошибки
     answers_time = 0  # затраченное время 
@@ -113,12 +115,10 @@ def count():
     count_to = int(count_to)
 
     for i in range(examples_quantity):
-        print('пример ' + str(i+1) + ':')
         number1 = randint(1, count_to)
         number2 = randint(1, count_to)
         sign = choice('+-')
-
-
+        
         if  sign == '-':
             while number1 < number2:
                 number1 = randint(1, count_to)
@@ -130,39 +130,51 @@ def count():
                 number2 = randint(1, count_to)
             right_answer = number1 + number2
 
-        print('сколько будет ' + str(number1) + sign + str(number2))
+        example = f'{number1} {sign} {number2}'
 
-        answer = ''  # Ответ пользователя
-        while not answer.isdigit():
+        while example not in uniques_examples:
+            uniques_examples.append(example)
+            example_number += 1
+            print('пример:' + str(example_number))
+            print(f'сколько будет {example}')
 
-            start = default_timer()  # начнем отсчёт
-            answer = input()
-            stop = default_timer()  # закончим отсчёт
+            answer = ''  # Ответ пользователя
+            while not answer.isdigit():
 
-            answers_time += round(stop - start)
+                start = default_timer()  # начнем отсчёт
+                answer = input()
+                stop = default_timer()  # закончим отсчёт
+
+                answers_time += round(stop - start)
 
 
-            if not answer.isdigit():
-                print('Должна быть цифра')
-                print('сколько будет ' + str(number1) + sign + str(number2))
+                if not answer.isdigit():
+                    print('Должна быть цифра')
+                    print('сколько будет ' + str(number1) + sign + str(number2))
 
-        answer = int(answer)
+            answer = int(answer)
 
-        if answer == right_answer:
-            print('Правильно, молодец')
-            correct_answers += 1
+            if answer == right_answer:
+                print('Правильно, молодец')
+                correct_answers += 1
+            else:
+        
+                print(my_warnings[randint(0, len(my_warnings)-1)])
+                print('Правильный ответ: '+str(right_answer))
+                fails += 1
+                
+                # создадим файл для записи ошибок
+                f = open(file_name, 'a')
+
+                #  запишем ошибку в файл
+                f.write(f'{number1} {sign} {number2} 3\n')
+
         else:
-       
-            print(my_warnings[randint(0, len(my_warnings)-1)])
-            print('Правильный ответ: '+str(right_answer))
-            fails += 1
-            
-            # создадим файл для записи ошибок
-            f = open(file_name, 'a')
+            continue
 
-            #  запишем ошибку в файл
-            f.write(f'{number1} {sign} {number2}\n')
-
+    if examples_quantity > example_number:
+        print("Исчерпаны всевозможные примеры в данном диапазоне")
+           
     if fails == 0:
         print(f'Молодец, {name}! Ты правильно ответил на все примеры за {seconds_convert(answers_time)}')
     else:
