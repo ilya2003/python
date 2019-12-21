@@ -79,6 +79,7 @@ def count():
     example_number = 0 # номер примера
     count_to = ''  # До скольки будем считать
     uniques_examples = [] # уникальные примеры
+    loop_number = 0 # количество циклов for раз
     correct_answers = 0  # правильные ответы
     fails = 0  # ошибки
     answers_time = 0  # затраченное время 
@@ -114,63 +115,70 @@ def count():
     examples_quantity = int(examples_quantity)
     count_to = int(count_to)
 
-    for i in range(examples_quantity):
-        number1 = randint(1, count_to)
-        number2 = randint(1, count_to)
-        sign = choice('+-')
-        
-        if  sign == '-':
-            while number1 < number2:
-                number1 = randint(1, count_to)
-            right_answer = number1 - number2
+    # проверим не вышли ли за максимальное количество примеров
+    while  not len(uniques_examples) == examples_quantity:
+        # если вышли за предел возможных вариантов
+        if loop_number>1000:
+            break
 
-        if  sign == '+':
-            while number1 + number2 > count_to:
-                number1 = randint(1, count_to)
-                number2 = randint(1, count_to)
-            right_answer = number1 + number2
+        for i in range(examples_quantity):
+            number1 = randint(1, count_to)
+            number2 = randint(1, count_to)
+            sign = choice('+-')
+            
+            if  sign == '-':
+                while number1 < number2:
+                    number1 = randint(1, count_to)
+                right_answer = number1 - number2
 
-        example = f'{number1} {sign} {number2}'
+            if  sign == '+':
+                while number1 + number2 > count_to:
+                    number1 = randint(1, count_to)
+                    number2 = randint(1, count_to)
+                right_answer = number1 + number2
 
-        while example not in uniques_examples:
-            uniques_examples.append(example)
-            example_number += 1
-            print('пример:' + str(example_number))
-            print(f'сколько будет {example}')
+            example = f'{number1} {sign} {number2}'
 
-            answer = ''  # Ответ пользователя
-            while not answer.isdigit():
+            while example not in uniques_examples:
+                uniques_examples.append(example)
+                example_number += 1
+                print('пример:' + str(example_number))
+                print(f'сколько будет {example}')
 
-                start = default_timer()  # начнем отсчёт
-                answer = input()
-                stop = default_timer()  # закончим отсчёт
+                answer = ''  # Ответ пользователя
+                while not answer.isdigit():
 
-                answers_time += round(stop - start)
+                    start = default_timer()  # начнем отсчёт
+                    answer = input()
+                    stop = default_timer()  # закончим отсчёт
+
+                    answers_time += round(stop - start)
 
 
-                if not answer.isdigit():
-                    print('Должна быть цифра')
-                    print('сколько будет ' + str(number1) + sign + str(number2))
+                    if not answer.isdigit():
+                        print('Должна быть цифра')
+                        print('сколько будет ' + str(number1) + sign + str(number2))
 
-            answer = int(answer)
+                answer = int(answer)
 
-            if answer == right_answer:
-                print('Правильно, молодец')
-                correct_answers += 1
-            else:
-        
-                print(my_warnings[randint(0, len(my_warnings)-1)])
-                print('Правильный ответ: '+str(right_answer))
-                fails += 1
-                
-                # создадим файл для записи ошибок
-                f = open(file_name, 'a')
+                if answer == right_answer:
+                    print('Правильно, молодец')
+                    correct_answers += 1
+                else:
+            
+                    print(my_warnings[randint(0, len(my_warnings)-1)])
+                    print('Правильный ответ: '+str(right_answer))
+                    fails += 1
+                    
+                    # создадим файл для записи ошибок
+                    f = open(file_name, 'a')
 
-                #  запишем ошибку в файл
-                f.write(f'{number1} {sign} {number2} 3\n')
+                    #  запишем ошибку в файл
+                    f.write(f'{number1} {sign} {number2} 3\n')
 
-        else:
-            continue
+        loop_number +=1
+
+    
 
     if examples_quantity > example_number:
         print("Исчерпаны всевозможные примеры в данном диапазоне")
