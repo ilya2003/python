@@ -1,8 +1,64 @@
 # программа для автоматизации навыков счёта
 import os
+import json
 from random import randint, choice
 from time import sleep
 from timeit import default_timer
+
+def select_entrance_type():
+    mode = ''
+    
+    print()
+    print('Авторизация - 1')
+    print('Регистрация - 2')
+    print('выход - 0')
+
+    while mode not in {'2', '1', '0'}:
+        print()
+        print('Введите номер:')
+        mode = input()
+        if mode not in {'2', '1', '0'}:
+            print('Должно быть 2, 1 или 0')
+   
+    return mode
+
+
+def enter_user():
+    
+    name = input("введите имя пользователя\n")
+    name = name.title()
+    password = input("введите пароль\n")
+
+    user={'name':name, 'password':password}
+    return user
+
+
+def login():
+    print()
+    print('АВТОРИЗАЦИЯ')
+    user = enter_user()
+    print(f'Привет, {user["name"]}')
+    
+
+def register():
+    print()
+    print('РЕГИСТРАЦИЯ')
+    user = enter_user()
+
+    filename = f'{user["name"]}_{user["password"]}_settings.json'
+    if not os.path.exists(filename):
+        print(f'Приятно познакомиться, {user["name"]}')
+
+        settings = {
+            'количество правильных ответов':'1',
+            'показывать правильный ответ': 'да'
+        }
+
+        with open(filename, 'w', encoding="utf-8") as f:
+            json.dump(settings, f, ensure_ascii=False)
+    else:
+        print('Такой пользователь уже существует')
+
 
 # Функция преобразования временных окончаний
 def time_endings(v):
@@ -68,11 +124,32 @@ def mode_select():
     return mode
 
 
+def get_settings():
+    
+    filename = "settings.json"
+    if not os.path.exists(filename):
+
+        settings = {
+            'количество правильных ответов':'1',
+            'показывать правильный ответ': 'да'
+        }
+
+        with open(filename, 'w', encoding="utf-8") as f:
+            json.dump(settings, f, ensure_ascii=False)
+    
+    with open(filename, 'r', encoding="utf-8") as f:
+        settings = json.load(f)
+    
+    return settings
+
+
 # Функция проверки знаний в математике
 def count():
     if not os.path.exists(file_name):
         print('Давай проверим твои знания в математике.')
     sleep(1)
+
+    settings = get_settings()
     
     my_warnings = ["Эх....", "А если подумать", "Проверь свой ответ прежде чем давать его", "Серьёзно?", "Напряги мозг"]   
     examples_quantity = ''  # Количество примеров
@@ -173,7 +250,8 @@ def count():
                     else:
                 
                         print(my_warnings[randint(0, len(my_warnings)-1)])
-                        print('Правильный ответ: '+str(right_answer))
+                        if settings['показывать правильный ответ'] == 'да':
+                            print('Правильный ответ: '+str(right_answer))
                         fails += 1
                         
                         # создадим файл для записи ошибок
@@ -261,11 +339,18 @@ def fix_errors():
 
 
 # Основной блок программы
-print('Привет! Меня зовут Роджер. А как тебя?')
-name = input()
-name = name.title()
-print('Приятно познакомиться, '+name)
-sleep(1)
+print('Привет! Меня зовут Роджер')
+
+selected_entrance_type = select_entrance_type()
+
+if selected_entrance_type == '1':
+    login()
+elif selected_entrance_type == '2':
+    register()
+else:
+    pass
+
+
 
 file_name = f'{name}_errors.txt'
 
