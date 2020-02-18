@@ -37,7 +37,13 @@ def login():
     print()
     print('АВТОРИЗАЦИЯ')
     user = enter_user()
-    print(f'Привет, {user["name"]}')
+
+    filename = f'{user["name"]}_{user["password"]}_settings.json'
+    if not os.path.exists(filename):
+        print(f'Неправильные логин или пароль!')
+        login()
+    else:
+        return filename
     
 
 def register():
@@ -47,7 +53,7 @@ def register():
 
     filename = f'{user["name"]}_{user["password"]}_settings.json'
     if not os.path.exists(filename):
-        print(f'Приятно познакомиться, {user["name"]}')
+        print(f'Приятно познакомиться, {user["name"]}!')
 
         settings = {
             'количество правильных ответов':'1',
@@ -56,8 +62,10 @@ def register():
 
         with open(filename, 'w', encoding="utf-8") as f:
             json.dump(settings, f, ensure_ascii=False)
+        return filename
     else:
         print('Такой пользователь уже существует')
+        register()
 
 
 # Функция преобразования временных окончаний
@@ -344,15 +352,9 @@ print('Привет! Меня зовут Роджер')
 selected_entrance_type = select_entrance_type()
 
 if selected_entrance_type == '1':
-    login()
+    file_name = login()
 elif selected_entrance_type == '2':
-    register()
-else:
-    pass
-
-
-
-file_name = f'{name}_errors.txt'
+    file_name = register()
 
 while True:
 
