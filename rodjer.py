@@ -5,68 +5,38 @@ from random import randint, choice
 from time import sleep
 from timeit import default_timer
 
-def select_entrance_type():
-    mode = ''
-    
-    print()
-    print('Авторизация - 1')
-    print('Регистрация - 2')
-    print('выход - 0')
 
-    while mode not in {'2', '1', '0'}:
-        print()
-        print('Введите номер:')
-        mode = input()
-        if mode not in {'2', '1', '0'}:
-            print('Должно быть 2, 1 или 0')
-   
-    return mode
+def auth_and_register():
+    login = input("введите имя пользователя\n") 
 
+    users_file = 'users.json'
+    users = {}
 
-def enter_user():
-    
-    name = input("введите имя пользователя\n")
-    name = name.title()
-    password = input("введите пароль\n")
+    if not os.path.exists(users_file):
+        with open(users_file, 'w', encoding='utf-8') as f:
+            json.dump(users, f, ensure_ascii=False)
 
-    user={'name':name, 'password':password}
-    return user
+    # открываем файл с пользователями
+    with open(users_file, 'r', encoding="utf-8") as f:
+        users = json.load(f)
 
-
-def login():
-    print()
-    print('АВТОРИЗАЦИЯ')
-    user = enter_user()
-
-    filename = f'{user["name"]}_{user["password"]}_settings.json'
-    if not os.path.exists(filename):
-        print(f'Неправильные логин или пароль!')
-        login()
+    # если нет нужного пользователя
+    if login not in users:
+        password = input("придумайте пароль\n")
+        users[login] = password
+        with open(users_file, 'w', encoding="utf-8") as f:
+            json.dump(users, f, ensure_ascii=False)
+            return login
     else:
-        return filename
-    
-
-def register():
-    print()
-    print('РЕГИСТРАЦИЯ')
-    user = enter_user()
-
-    filename = f'{user["name"]}_{user["password"]}_settings.json'
-    if not os.path.exists(filename):
-        print(f'Приятно познакомиться, {user["name"]}!')
-
-        settings = {
-            'количество правильных ответов':'1',
-            'показывать правильный ответ': 'да'
-        }
-
-        with open(filename, 'w', encoding="utf-8") as f:
-            json.dump(settings, f, ensure_ascii=False)
-        return filename
-    else:
-        print('Такой пользователь уже существует')
-        register()
-
+        password = input("введите пароль\n")
+        if users[login] == password:
+            print('Успешная авторизация')
+            return login
+        else:
+            print('''Ошибка авторизации!!!
+Попробуйте ввести имя ещё раз, или введите новое имя для регистрации''')
+            auth_and_register()
+            
 
 # Функция преобразования временных окончаний
 def time_endings(v):
@@ -276,11 +246,11 @@ def count():
             print("Исчерпаны всевозможные примеры в данном диапазоне")
            
     if fails == 0:
-        print(f'Молодец, {name}! Ты правильно ответил на все примеры за {seconds_convert(answers_time)}')
+        print(f'Молодец, {user}! Ты правильно ответил на все примеры за {seconds_convert(answers_time)}')
     else:
         print(f'Правильных ответов: {correct_answers}')
         print('Ошибок: '+ str(fails))
-        print(f'{name}! Ты ответил на все примеры за {seconds_convert(answers_time)}')
+        print(f'{user}! Ты ответил на все примеры за {seconds_convert(answers_time)}')
         f.close()
 
 
@@ -345,16 +315,19 @@ def fix_errors():
         os.rename(f'tmp_{file_name}', file_name)
 
 
-
 # Основной блок программы
 print('Привет! Меня зовут Роджер')
 
-selected_entrance_type = select_entrance_type()
+user = auth_and_register()
 
-if selected_entrance_type == '1':
-    file_name = login()
-elif selected_entrance_type == '2':
-    file_name = register()
+file_name = f'{user}_settings.json'
+settings = {
+            'количество правильных ответов':'1',
+            'показывать правильный ответ': 'да'
+            }
+
+with open(file_name, 'w', encoding="utf-8") as f:
+    json.dump(settings, f, ensure_ascii=False)
 
 while True:
 
@@ -382,4 +355,4 @@ while True:
         else:
             pass
     
-    
+   
